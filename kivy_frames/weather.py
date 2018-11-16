@@ -1,4 +1,9 @@
+import datetime
+
+import requests
+from kivy.clock import Clock
 from kivy.uix.boxlayout import BoxLayout
+from utils import TimeConstant
 
 from kivy_frames.basicWidget import BasicWidget
 
@@ -45,21 +50,13 @@ class Weather(BoxLayout):
 
     def __init__(self, *args, **kwargs):
         BoxLayout.__init__(self, *args, **kwargs)
-        '''
-        # настраиваем лейблы с погодой
-        self.weatherLabel = Label(self, font=('Helvetica', 48), fg="white", bg="black")
-        self.weatherImageLabel = Label(self, bg="black")
-        self.weatherDescriptionLabel = Label(self, font=('Helvetica', 48), fg="white", bg="black")
 
-        # распологаем лейблы с погодой на экране
-        self.weatherImageLabel.pack(side=LEFT)
-        self.weatherLabel.pack()
-        self.weatherDescriptionLabel.pack()
+        self.weather_status = ''
+        self.weather_image = ''
        
 
         # обновляем погоду на лейблах
-        self.get_weather()
-        '''
+        Clock.schedule_interval(self.get_weather, TimeConstant.ONE_HOUR)
 
     def pick_image_name_from_id(self, hour, weather_id):
         for weather_type in self.weather_id:                  # Перебираем погодные типы из словаря типов
@@ -71,7 +68,7 @@ class Weather(BoxLayout):
                         return self.weather_night_images[weather_type]
 
     def get_weather(self):
-        '''
+
         # получаем погоду с api.openweathermap.org
         res = requests.get("http://api.openweathermap.org/data/2.5/find",
                            params={
@@ -82,25 +79,15 @@ class Weather(BoxLayout):
         json_response = res.json()
 
         # todo:    привести пример
-        weather = ' {:+.0f} {}'.format(json_response['list'][0]['main']['temp'], "°C")
-
+        # weather = ' {:+.0f} {}'.format(json_response['list'][0]['main']['temp'], "°C")
         # weather_status = data['list'][0]['weather_icons'][0]['main']
 
         weather_description = ' {}'.format(json_response['list'][0]['weather'][0]['description'])
 
         weather_id = json_response['list'][0]['weather'][0]['id']
 
-        self.weatherLabel.config(text=weather)
-        self.weatherDescriptionLabel.config(text=weather_description)
         hour = int(datetime.datetime.now().strftime('%H'))
 
-        # устанавливаем иконку соотвествующей погоды
-        statusImg = Image.open(self.pick_image_name_from_id(hour, weather_id))
-        statusImg.thumbnail((100, 100))
-        statusImg = ImageTk.PhotoImage(statusImg)
+        self.ids["weather_image"].source = self.pick_image_name_from_id(hour, weather_id)
+        self.ids["weather_status"].text = weather_description
 
-        self.weatherImageLabel.config(image=statusImg)
-        self.weatherImageLabel.image = statusImg
-
-        self.weatherImageLabel.after(TimeConstant.ONE_HOUR, self.get_weather)
-        '''
