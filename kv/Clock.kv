@@ -1,9 +1,10 @@
 <Clock>:
     orientation: "vertical"
 
-    Label:
-        id: "clock"
+    MonoLabel:
+        id: clock0
         text: "--:--"
+        font_size: self.height
 
     BoxLayout:
         orientation: "horizontal"
@@ -11,17 +12,21 @@
         BoxLayout:
             orientation: "vertical"
 
-            Label:
+            MonoLabel:
+                id: clock1
                 text: "clock1"
 
-            Label:
+            MonoLabel:
+                id: clock2
                 text: "clock2"
 
         BoxLayout:
             orientation: "vertical"
 
-            Label:
+            MonoLabel:
+                id: clock3
                 text: "clock3"
 
-            Label:
+            MonoLabel:
+                id: clock4
                 text: "clock4"

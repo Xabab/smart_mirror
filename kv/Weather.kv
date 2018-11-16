@@ -1,1 +1,19 @@
 <Weather>:
+    orientation: "vertical"
+
+    BoxLayout:
+        orientation: "horizontal"
+
+        Image:
+            #source = "weather_icons/tux.png"
+            size_hint: (0.3, None)
+
+            canvas.before:
+                Color:
+                    rgba: .5, .5, .5, 1
+                Line:
+                    width: 1
+                    rectangle: self.x, self.y,self.width, self.height
+
+        MonoLabel:
+            text: "+666*"

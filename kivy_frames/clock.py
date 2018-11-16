@@ -1,33 +1,34 @@
+import math
+
 from kivy.uix.boxlayout import BoxLayout
 from kivy.clock import Clock as Cl
 import datetime
 
 class Clock(BoxLayout):
+    iteration = 0
+
     def __init__(self, *args, **kwargs):
         BoxLayout.__init__(self, *args, **kwargs)
         self.formattedTime = ''
-        #self.formattedDate = ''
 
-        Cl.schedule_once(self.update, 0)
+        Cl.schedule_interval(self.update, 0.25)
 
 
     def update(self, *args):
-        #                                      например, "22:30"
-        formattedTime = datetime.datetime.now().strftime("%H:%M")
-        ##                                      например, "08 November, 2018"
-        #formattedDate = datetime.datetime.now().strftime("%d %B, %Y")
 
-        # обновляем содержимое лейблов даты и времени
+        if math.floor(self.iteration/2) == 0:
+            #                                      например, "22:30"
+            formattedTime = datetime.datetime.now().strftime("%H:%M")
+        else:
+            #                                      например, "22 30"
+            formattedTime = datetime.datetime.now().strftime("%H %M")
+
+        self.iteration += 1
+
+        if self.iteration > 3:
+            self.iteration = 0
+
         if formattedTime != self.formattedTime:
             self.formattedTime = formattedTime
-            self.ids["clock"].text = formattedTime
+            self.ids["clock0"].text = formattedTime
 
-        #if formattedDate != self.formattedDate:
-        #    self.formattedDate = formattedDate
-        #    self.dateLabel.config(text=formattedDate)
-
-        # выполняем апдейт 10 раз/секунду
-        #self.timeLabel.after(100, self.update)
-
-    def _update_system_time(self):
-        pass
