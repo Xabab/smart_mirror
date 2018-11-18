@@ -1,4 +1,4 @@
-from kivy_frames.basicWidget import BasicWidget
+from kivy_frames.utils import BasicWidget
 
 
 class Mail(BasicWidget):

@@ -2,13 +2,12 @@ import datetime
 
 import requests
 from kivy.clock import Clock
-from kivy.uix.boxlayout import BoxLayout
+
+from kivy_frames.utils import BasicWidget
 from utils import TimeConstant
 
-from kivy_frames.basicWidget import BasicWidget
 
-
-class Weather(BoxLayout):
+class Weather(BasicWidget):
 
     weather_config = {
         'city': 'Kharkiv',
@@ -49,14 +48,14 @@ class Weather(BoxLayout):
                 }
 
     def __init__(self, *args, **kwargs):
-        BoxLayout.__init__(self, *args, **kwargs)
+        super().__init__(**kwargs)
 
         self.weather_status = ''
         self.weather_image = ''
-       
 
         # обновляем погоду на лейблах
-        Clock.schedule_interval(self.get_weather, TimeConstant.ONE_HOUR)
+        Clock.schedule_once(self.update)
+        Clock.schedule_interval(self.update, TimeConstant.ONE_HOUR)
 
     def pick_image_name_from_id(self, hour, weather_id):
         for weather_type in self.weather_id:                  # Перебираем погодные типы из словаря типов
@@ -67,20 +66,26 @@ class Weather(BoxLayout):
                     else:
                         return self.weather_night_images[weather_type]
 
-    def get_weather(self):
-
+    def update(self, *args):
         # получаем погоду с api.openweathermap.org
-        res = requests.get("http://api.openweathermap.org/data/2.5/find",
-                           params={
-                               'q': self.weather_config['city'],
-                               'type': 'like',
-                               'units': 'metric',
-                               'APPID': self.weather_config['APPID']})
+        try:
+            res = requests.get("http://api.openweathermap.org/data/2.5/find",
+                               params={
+                                   'q': self.weather_config['city'],
+                                   'type': 'like',
+                                   'units': 'metric',
+                                   'APPID': self.weather_config['APPID']})
+        except:
+            self.ids['weatherImage'].source = self.weather_day_images['clear']
+            self.ids['weatherTemperature'].text = '+666°C'
+            self.ids['weatherStatus'].text = 'No connection'
+
+            return
+
         json_response = res.json()
 
-        # todo:    привести пример
-        # weather = ' {:+.0f} {}'.format(json_response['list'][0]['main']['temp'], "°C")
-        # weather_status = data['list'][0]['weather_icons'][0]['main']
+        # пример  '+3°C'
+        weather = '{:+.0f}{}'.format(json_response['list'][0]['main']['temp'], "°C")
 
         weather_description = ' {}'.format(json_response['list'][0]['weather'][0]['description'])
 
@@ -88,6 +93,7 @@ class Weather(BoxLayout):
 
         hour = int(datetime.datetime.now().strftime('%H'))
 
-        self.ids["weather_image"].source = self.pick_image_name_from_id(hour, weather_id)
-        self.ids["weather_status"].text = weather_description
+        self.ids['weatherImage'].source = self.pick_image_name_from_id(hour, weather_id)
+        self.ids['weatherTemperature'].text = weather
+        self.ids['weatherStatus'].text = weather_description
 

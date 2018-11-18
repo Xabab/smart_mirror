@@ -1,16 +1,19 @@
 import math
 
-from kivy.uix.boxlayout import BoxLayout
 from kivy.clock import Clock as Cl
 import datetime
 
-class Clock(BoxLayout):
+from kivy_frames.utils import BasicWidget
+
+
+class Clock(BasicWidget):
     iteration = 0
 
     def __init__(self, *args, **kwargs):
-        BoxLayout.__init__(self, *args, **kwargs)
+        super().__init__(**kwargs)
         self.formattedTime = ''
 
+        Cl.schedule_once(self.update)
         Cl.schedule_interval(self.update, 0.25)
 
 

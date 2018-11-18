@@ -1,10 +1,13 @@
 <Calendar>:
     orientation: "vertical"
 
-    MonoLabel:
-        text: "Date"
-        id: date
-        font_size: self.height
+    BoxLayout:
+        MonoAdaptiveLabel:
+            text: "Date"
+            id: date
+            font_size: self.height
 
-    Widget:
-        name: "filler"
+    BoxLayout:  # forgive me Lord, I've sinned
+        name: "calendar"
+        Label:
+            text: "calendar will be here"
